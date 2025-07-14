@@ -27,7 +27,7 @@ requestStreamDetails().then((streams) => {
     socketClient.connect();
     socketClient.on('update_space', (space) => {
         console.log('Received space update', space.id);
-        const stream = streams.find(s => s.name.replace(/ /g,'').toLowerCase() === space.id);
+        const stream = streams.find(s => s.name.replace(/[\s-]/g, "").toLowerCase() === space.id);
         if (!stream) {
             console.error('Stream not found', space.id);
             return;
