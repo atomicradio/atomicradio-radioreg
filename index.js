@@ -35,7 +35,7 @@ requestStreamDetails().then((streams) => {
         axios.post('https://api.radioreg.net/stream/update/' + stream.streamUUID, {
             title: space.current_track.title,
             artist: space.current_track.artist,
-            art: space.current_track.artwork + '?width=200&height=200&sa=webp'
+            art: space.current_track.artwork
         }, { headers: { "X-API-KEY": process.env.API_KEY, "Content-Type": "application/json" } }).then(() => {
             console.log('Webhook sent', space.id, stream.streamUUID);
         }).catch((err) => {
