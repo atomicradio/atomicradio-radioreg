@@ -12,14 +12,14 @@ function requestStreamDetails() {
     return new Promise((resolve, reject) => {
         axios.get('https://api.radioreg.net/organization/4/token/streams/details',
             { headers: { "X-API-KEY": process.env.API_KEY, "Content-Type": "application/json" } })
-                .then((res) => {
-                    console.info('Received stream details');
-                    resolve(res.data);
-                })
-                .catch((err) => {
-                    console.error('Failed to fetch stream details', err);
-                    reject(err);
-                });
+            .then((res) => {
+                console.info('Received stream details');
+                resolve(res.data);
+            })
+            .catch((err) => {
+                console.error('Failed to fetch stream details', err);
+                reject(err);
+            });
     });
 }
 
@@ -35,10 +35,17 @@ requestStreamDetails().then((streams) => {
         axios.post('https://api.radioreg.net/stream/update/' + stream.streamUUID, {
             title: space.current_track.title,
             artist: space.current_track.artist,
-            art: space.current_track.artwork
+            art: space.current_track.artwork,
+            nextTitle: space.next_tracks[0].title,
+            nextArtist: space.next_tracks[0].artist,
+            nextArt: space.next_tracks[0].artwork,
         }, { headers: { "X-API-KEY": process.env.API_KEY, "Content-Type": "application/json" } }).then(() => {
             console.log('Webhook sent', space.id, stream.streamUUID);
         }).catch((err) => {
+            if (err.response.status === 429) {
+                console.warn("Too Many Requests", space.id, stream.streamUUID);
+                return;
+            }
             console.error('Failed to send webhook', err);
         });
     });
